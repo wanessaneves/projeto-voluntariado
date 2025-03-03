@@ -1,54 +1,33 @@
-const uuid = require("uuid");
-const Database = require("../database");
-const userActivityDB = new Database("user_activities");
+const {
+  createUserActivity,
+  getActivitiesByUser,
+} = require("../services/user_activities");
 
 // inscrição de usuário em atividade
-const createUserActivity = async (req, res) => {
+const create = async (req, res) => {
   const user = req.user;
   const { id } = req.params;
 
-  const userActivityId = uuid.v4();
-  const newUserActivity = {
-    id: userActivityId,
-    userId: user.id,
-    activityId: id,
-  };
+  try {
+    const userActivity = await createUserActivity(user.id, id);
+    res.json(userActivity);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
-  userActivityDB.readAllData((err, data) => {
-    if (err) {
-      res.status(500).json({ error: "Erro ao listar inscrições do usuário" });
-      return;
-    }
+const myActivities = async (req, res) => {
+  const user = req.user;
 
-    const userActivityExists = data.find(
-      (item) => item.activityId === id && item.userId === user.id
-    );
-
-    if (userActivityExists) {
-      return res
-        .status(400)
-        .json({ error: "você já se inscreveu para essa atividade" });
-    }
-
-    const actvitity = data.find(
-      (item) => item.activityId === id && item.userId === user.id
-    );
-
-    userActivityDB.put(
-      `user_activity_${userActivityId}`,
-      JSON.stringify(newUserActivity),
-      (err) => {
-        if (err) {
-          res.status(500).json({ error: "Erro ao criar usuário" });
-          return;
-        }
-
-        res.status(201).json(newUserActivity);
-      }
-    );
-  });
+  try {
+    const activities = await getActivitiesByUser(user.id);
+    res.json(activities);
+  } catch (err) {
+    res.json([]);
+  }
 };
 
 module.exports = {
-  createUserActivity,
+  create,
+  myActivities,
 };

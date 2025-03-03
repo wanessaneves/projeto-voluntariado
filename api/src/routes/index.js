@@ -7,22 +7,27 @@ const routes = Router();
 
 const userController = require("../controllers/users");
 const activityController = require("../controllers/activities");
+const userActivityController = require("../controllers/user_activities");
 
 // auth routes
 routes.post("/login", userController.login);
 
 // user routes
-routes.get("/users", admin, userController.listUsers);
-routes.post("/users", userController.createUser);
-routes.get("/users/:id", admin, userController.detailUser);
-routes.put("/users/:id", auth, userController.updateUser);
-routes.delete("/users/:id", auth, userController.deleteUser);
+routes.get("/users", admin, userController.list);
+routes.post("/users", userController.create);
+routes.get("/users/:id", admin, userController.detail);
+routes.put("/users/:id", auth, userController.update);
+routes.delete("/users/:id", auth, userController.destroy);
 
 // activity routes
-routes.get("/activities", auth, activityController.listActivity);
-routes.post("/activities", admin, activityController.createActivity);
-routes.get("/activities/:id", auth, activityController.detailActivity);
-routes.put("/activities/:id", admin, activityController.updateActivity);
-routes.delete("/activities/:id", admin, activityController.deleteActivity);
+routes.get("/activities", auth, activityController.list);
+routes.post("/activities", admin, activityController.create);
+routes.get("/activities/:id", auth, activityController.detail);
+routes.put("/activities/:id", admin, activityController.update);
+routes.delete("/activities/:id", admin, activityController.destroy);
+
+// user activity routes
+routes.post("/user-activities/:id", auth, userActivityController.create);
+routes.get("/my-activities", auth, userActivityController.myActivities);
 
 module.exports = routes;

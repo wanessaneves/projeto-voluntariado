@@ -35,7 +35,7 @@ class Database {
     const loop = () => {
       iterator.next((err, key, value) => {
         if (err) {
-          interator.end(() => {
+          iterator.end(() => {
             callback(err);
           });
 
