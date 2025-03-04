@@ -59,13 +59,14 @@ const updateActivity = async (id, data) => {
     throw new Error("error ao atualizar atividade");
   }
 
+  const quantity = data.quantity ? parseInt(data.quantity) : activity.quantity;
   const updatedAct = {
     id: activity.id,
     title: data.title || activity.title,
     description: data.description || activity.description,
     date: data.date || activity.date,
     address: data.address || activity.address,
-    quantity: data.quantity || activity.quantity,
+    quantity,
   };
 
   return new Promise((resolve, reject) => {
@@ -87,7 +88,7 @@ const createActivity = (data) => {
     description: data.description,
     date: data.date,
     address: data.address,
-    quantity: data.quantity,
+    quantity: parseInt(data.quantity),
   };
 
   return new Promise((resolve, reject) => {

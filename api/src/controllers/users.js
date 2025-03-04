@@ -45,7 +45,6 @@ const list = async (req, res) => {
 };
 
 // criação de usuário
-// TODO: verificar se o email está em uso
 const create = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -55,7 +54,22 @@ const create = async (req, res) => {
       .json({ error: "name, email e password são obrigatórios" });
   }
 
+  if (password.length < 6) {
+    return res
+      .status(400)
+      .json({ error: "A senha precisa ter mais que 6 caracteres" });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: "Email inválido" });
+  }
   try {
+    const existingUser = await getUserByEmail(email);
+
+    if (existingUser) {
+      return res.status(400).json({ error: "Email já está em uso" });
+    }
     const user = await createUser({ name, email, password });
     res.status(201).json(user);
   } catch (err) {
@@ -65,20 +79,18 @@ const create = async (req, res) => {
 };
 
 // detalhar um usuário
-const detail = (req, res) => {
+const detail = async (req, res) => {
   const { id } = req.params;
 
-  const user = getUserById(id);
-
-  if (!user) {
-    return res.status(404).json({ error: "usuário não encontrado" });
+  try {
+    const user = await getUserById(id);
+    res.json(user);
+  } catch (err) {
+    res.status(404).json({ error: "usuário não encontrado" });
   }
-
-  res.json(user);
 };
 
 // atualizar um usuário
-// TODO: verificar se o email está em uso
 const update = async (req, res) => {
   const user = req.user;
   const { id } = req.params;
@@ -86,6 +98,20 @@ const update = async (req, res) => {
 
   if (user.id !== id) {
     return res.status(403).json({ error: "você não pode realizar essa ação" });
+  }
+
+  if (password && password.length < 6) {
+    return res
+      .status(400)
+      .json({ error: "A senha precisa ter mais que 6 caracteres" });
+  }
+
+  if (user.email !== email) {
+    const existingUser = await getUserByEmail(email);
+
+    if (existingUser) {
+      return res.status(400).json({ error: "Email já está em uso" });
+    }
   }
 
   try {
@@ -97,7 +123,7 @@ const update = async (req, res) => {
 };
 
 // excluir usuário
-const destroy = (req, res) => {
+const destroy = async (req, res) => {
   const user = req.user;
   const { id } = req.params;
 
@@ -110,7 +136,7 @@ const destroy = (req, res) => {
   }
 
   try {
-    deleteUser(id);
+    await deleteUser(id);
     res.status(204).send();
   } catch (err) {
     res.status(400).json({ error: "erro ao excluir usuário" });

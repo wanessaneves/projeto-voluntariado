@@ -27,12 +27,14 @@ const getUserByEmail = async (email) => {
 };
 
 const getUserById = (id) => {
-  userDB.get(`user_${id}`, (err, value) => {
-    if (err) {
-      return null;
-    }
-
-    return JSON.parse(value.toString());
+  return new Promise((resolve, reject) => {
+    userDB.get(`user_${id}`, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(JSON.parse(value.toString()));
+      }
+    });
   });
 };
 
@@ -86,10 +88,14 @@ const updateUser = async (id, data) => {
 };
 
 const deleteUser = (id) => {
-  userDB.delete(`user_${id}`, (err, value) => {
-    if (err) {
-      throw new Error("Erro ao excluír usuário");
-    }
+  return new Promise((resolve, reject) => {
+    activityDB.delete(`user_${id}`, (err, value) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
   });
 };
 

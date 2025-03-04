@@ -5,6 +5,7 @@ const {
   updateActivity,
   createActivity,
 } = require("../services/activities");
+const { getAllMembersByActivityId } = require("../services/user_activities");
 
 // Criação de atividade
 const create = async (req, res) => {
@@ -60,16 +61,19 @@ const update = async (req, res) => {
 };
 
 //Listagem de atividades
-// TODO: precisa filtrar po atividades que tenha a data maior que hoje
 const list = async (req, res) => {
   const user = req.user;
+  const today = new Date();
 
   if (user.isAdmin) {
     const activities = await listAllActivities(true);
     res.json(activities);
   } else {
     const activities = await listAllActivities(false);
-    res.json(activities);
+    const filteredActivities = activities.filter(
+      (activity) => new Date(activity.date) > today
+    );
+    res.json(filteredActivities);
   }
 };
 
@@ -85,10 +89,17 @@ const destroy = async (req, res) => {
   }
 };
 
+const listMembers = async (req, res) => {
+  const { id } = req.params;
+  const members = await getAllMembersByActivityId(id);
+  res.json(members);
+};
+
 module.exports = {
   create,
   detail,
   update,
   list,
   destroy,
+  listMembers,
 };

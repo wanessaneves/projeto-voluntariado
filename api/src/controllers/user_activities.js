@@ -1,6 +1,7 @@
 const {
   createUserActivity,
   getActivitiesByUser,
+  cancelActivity,
 } = require("../services/user_activities");
 
 // inscrição de usuário em atividade
@@ -27,7 +28,20 @@ const myActivities = async (req, res) => {
   }
 };
 
+const cancel = async (req, res) => {
+  const user = req.user;
+  const { id } = req.params;
+
+  try {
+    await cancelActivity(user.id, id);
+    res.send(204).json();
+  } catch (err) {
+    res.status(400).json({ error: "erro ao cancelar inscrição" });
+  }
+};
+
 module.exports = {
   create,
   myActivities,
+  cancel,
 };

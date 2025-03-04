@@ -1,6 +1,7 @@
 const uuid = require("uuid");
 
 const { getActivityById, listAllActivities } = require("./activities");
+const { getUserById } = require("./users");
 
 const Database = require("../database");
 const userActivityDB = new Database("user_activities");
@@ -41,6 +42,18 @@ const getUserActivityByActivity = async (activityId) => {
   } catch (err) {
     return [];
   }
+};
+
+const getUserActivityById = (id) => {
+  return new Promise((resolve, reject) => {
+    userDB.get(`user_activity_${id}`, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(JSON.parse(value.toString()));
+      }
+    });
+  });
 };
 
 const getActivitiesByUser = async (userId) => {
@@ -109,10 +122,60 @@ const createUserActivity = async (userId, activityId) => {
   );
 };
 
+const deleteUserActivity = (id) => {
+  return new Promise((resolve, reject) => {
+    activityDB.delete(`user_activity_${id}`, (err, value) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
+
+const cancelActivity = async (userId, userActivityId) => {
+  const userActivity = await getUserActivityById(userActivityId);
+
+  if (userActivity.userId !== userId) {
+    throw new Error("essa incrição não pertence a você");
+  }
+
+  const activity = await getActivityById(userActivity.activityId);
+
+  const today = new Date();
+  const activityDate = new Date(activity.date);
+
+  if (today >= activityDate) {
+    throw new Error(
+      "O período de cancelamento de inscrição dessa atividade não é permitido"
+    );
+  }
+
+  await deleteUserActivity(userActivityId);
+};
+
+const getAllMembersByActivityId = async (activityId) => {
+  const userActivities = await getUserActivityByActivity(activityId);
+
+  const users = [];
+
+  for await (const userActivity of userActivities) {
+    const user = await getUserById(userActivity.userId);
+    users.push(user);
+  }
+
+  return users;
+};
+
 module.exports = {
   listAllUserActivities,
   createUserActivity,
   getUserActivityByUserAndActivity,
   getUserActivityByActivity,
   getActivitiesByUser,
+  getUserActivityById,
+  deleteUserActivity,
+  cancelActivity,
+  getAllMembersByActivityId,
 };
