@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voluntariado</title>
+
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="login-page">
+      <div class="card">
+        <div class="card-title">Criar minha conta</div>
+        <form id="activity-form">
+          <input type="text" id="name" placeholder="Nome" required autofocus />
+          <input type="email" id="email" placeholder="Email" required />
+          <input type="password" id="password" placeholder="Senha" required />
+          <button type="submit" class="btn-success">Criar</button>
+          <a class="btn btn-secondary" href="./index.html">Ja tenho uma conta</a>
+        </form>
+      </div>
+      <p id="message"></p>
+    </div>
+
+    <script type="module" src="../../scripts/activities.js"></script>
+  </body>
+</html>

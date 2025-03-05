@@ -20,6 +20,11 @@ const login = async (req, res) => {
   }
 
   const user = await getUserByEmail(email);
+
+  if (!user) {
+    return res.status(401).json({ error: "email ou senha incorretos" });
+  }
+
   const passwordSuccess = await compare(password, user.password);
 
   if (!passwordSuccess) {
@@ -31,7 +36,7 @@ const login = async (req, res) => {
       algorithm: "HS256",
       expiresIn: "1d",
     });
-    res.json({ token });
+    res.json({ token, user });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Erro ao autenticar usuário" });
