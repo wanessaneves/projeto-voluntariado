@@ -89,7 +89,7 @@ const updateUser = async (id, data) => {
 
 const deleteUser = (id) => {
   return new Promise((resolve, reject) => {
-    activityDB.delete(`user_${id}`, (err, value) => {
+    userDB.delete(`user_${id}`, (err, value) => {
       if (err) {
         reject(err);
       } else {

@@ -1,3 +1,9 @@
+//A classe Database criada segue um padrão assíncrono baseado em callbacks. Isso significa que os métodos put, get, delete, etc., recebem um callback que será chamado apenas quando a operação for concluída.
+
+//o RocksDB não retorna um valor diretamente, mas sim chama a função callback quando a operação termina.
+
+// As funções assíncronas (async) só podem aguardar Promises
+
 const RocksDB = require("@salto-io/rocksdb");
 const path = require("path");
 

@@ -17,7 +17,7 @@ routes.get("/users", admin, userController.list);
 routes.post("/users", userController.create);
 routes.get("/users/:id", admin, userController.detail);
 routes.put("/users/:id", auth, userController.update);
-routes.delete("/users/:id", auth, userController.destroy);
+routes.delete("/users/:id", admin, userController.destroy);
 
 // activity routes
 routes.get("/activities", auth, activityController.list);

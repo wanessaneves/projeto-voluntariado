@@ -1,3 +1,7 @@
+//o controller vai lidar com as interações da requisição e encaminhá-las para os services que contêm essa lógica/regra de negócio.
+
+//Receber a Requisição (Request), Validar a Requisição, Encaminhar a Requisição para o Service, Tratar Respostas, e Tratar erros.
+
 const {
   createUserActivity,
   getActivitiesByUser,
@@ -5,15 +9,16 @@ const {
 } = require("../services/user_activities");
 
 // inscrição de usuário em atividade
+//Essa função cria uma atividade para o usuário autenticado.
 const create = async (req, res) => {
-  const user = req.user;
-  const { id } = req.params;
+  const user = req.user; //Pega os dados do usuário autenticado do objeto
+  const { id } = req.params; //Extrai o id dos parâmetros da URL
 
   try {
-    const userActivity = await createUserActivity(user.id, id);
-    res.json(userActivity);
+    const userActivity = await createUserActivity(user.id, id); //Chama a função createUserActivity(user.id, id)
+    res.json(userActivity); //Retorna a atividade criada no formato JSON.
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: err.message }); //Se ocorrer um erro, retorna um status 400 (Bad Request) com a mensagem do erro.
   }
 };
 

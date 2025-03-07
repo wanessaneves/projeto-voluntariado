@@ -77,47 +77,49 @@ const getActivitiesByUser = async (userId) => {
   }
 };
 
+//inscrever um usuário em uma atividade,
 const createUserActivity = async (userId, activityId) => {
-  const activity = await getActivityById(activityId);
+  const activity = await getActivityById(activityId); //Busca os detalhes da atividade
 
   const userActivityExists = await getUserActivityByUserAndActivity(
     userId,
     activityId
-  );
+  ); //Verifica se o usuário já está inscrito na atividade
 
   if (userActivityExists) {
     throw new Error("Você já está cadastrado nessa atividade");
   }
 
-  const today = new Date();
+  const today = new Date().getUTCDate;
   const activityDate = new Date(activity.date);
 
   if (today >= activityDate) {
     throw new Error("O período de inscrição nessa atividade foi encerrado");
-  }
+  } //Se a data atual (today) for maior ou igual à data da atividade
 
-  const userActivityByActivity = await getUserActivityByActivity(activityId);
+  const userActivityByActivity = await getUserActivityByActivity(activityId); //buscar todas as inscrições de usuários para uma determinada atividade.
 
   if (userActivityByActivity.length >= activity.quantity) {
     throw new Error("Essa atividade atingiu o número de vagas disponíveis");
-  }
+  } //Verifica se a quantidade de inscritos é maior ou igual ao limite da atividade
 
-  const userActivityId = uuid.v4();
+  const userActivityId = uuid.v4(); //Gera um ID único para a inscrição
   const newUserActivityData = {
     id: userActivityId,
     userId,
     activityId,
-  };
+  }; //Cria um novo objeto de inscrição
 
   userActivityDB.put(
-    `user_activity_${userActivityId}`,
-    JSON.stringify(newUserActivityData),
+    //Armazena os dados no banco de dados
+    `user_activity_${userActivityId}`, // Chave de armazenamento
+    JSON.stringify(newUserActivityData), // Converte os dados para JSON
     (err) => {
       if (err) {
         throw new Error("falha ao increver usuário na atividade");
       }
 
-      return newUserActivityData;
+      return newUserActivityData; //// Retorna os dados da inscrição
     }
   );
 };
