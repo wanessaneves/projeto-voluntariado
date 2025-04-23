@@ -38,7 +38,6 @@ const login = async (req, res) => {
     });
     res.json({ token, user });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: "Erro ao autenticar usuário" });
   }
 };
@@ -78,7 +77,6 @@ const create = async (req, res) => {
     const user = await createUser({ name, email, password });
     res.status(201).json(user);
   } catch (err) {
-    console.log(err);
     res.status(400).json({ error: "erro ao criar usuário" });
   }
 };

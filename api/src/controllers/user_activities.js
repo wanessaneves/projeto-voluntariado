@@ -6,6 +6,7 @@ const {
   createUserActivity,
   getActivitiesByUser,
   cancelActivity,
+  getUserActivityByActivity
 } = require("../services/user_activities");
 
 // inscrição de usuário em atividade
@@ -27,6 +28,18 @@ const myActivities = async (req, res) => {
 
   try {
     const activities = await getActivitiesByUser(user.id);
+
+    for await (const activity of activities) {
+      const userActivitiesByActivity = await getUserActivityByActivity(
+        activity.id
+      );
+      const userCount = userActivitiesByActivity.length || 0;
+      activity.userCount = userCount;
+      if (userActivitiesByActivity.length > 0) {
+        activity.userActivityId = userActivitiesByActivity[0].id || null;
+      }
+    }
+    
     res.json(activities);
   } catch (err) {
     res.json([]);
@@ -39,8 +52,9 @@ const cancel = async (req, res) => {
 
   try {
     await cancelActivity(user.id, id);
-    res.send(204).json();
+    res.send(204)
   } catch (err) {
+    console.log(err)
     res.status(400).json({ error: "erro ao cancelar inscrição" });
   }
 };

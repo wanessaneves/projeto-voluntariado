@@ -46,11 +46,11 @@ const getUserActivityByActivity = async (activityId) => {
 
 const getUserActivityById = (id) => {
   return new Promise((resolve, reject) => {
-    userDB.get(`user_activity_${id}`, (err, data) => {
+    userActivityDB.get(`user_activity_${id}`, (err, data) => {
       if (err) {
         reject(err);
       } else {
-        resolve(JSON.parse(value.toString()));
+        resolve(JSON.parse(data.toString()));
       }
     });
   });
@@ -69,8 +69,6 @@ const getActivitiesByUser = async (userId) => {
       userActivitiesIds.includes(activity.id)
     );
 
-    console.log(activities);
-
     return activities;
   } catch (err) {
     return [];
@@ -79,7 +77,7 @@ const getActivitiesByUser = async (userId) => {
 
 //inscrever um usuário em uma atividade,
 const createUserActivity = async (userId, activityId) => {
-  const activity = await getActivityById(activityId); //Busca os detalhes da atividade
+  const activity = await getActivityById(activityId);
 
   const userActivityExists = await getUserActivityByUserAndActivity(
     userId,
@@ -126,7 +124,7 @@ const createUserActivity = async (userId, activityId) => {
 
 const deleteUserActivity = (id) => {
   return new Promise((resolve, reject) => {
-    activityDB.delete(`user_activity_${id}`, (err, value) => {
+    userActivityDB.delete(`user_activity_${id}`, (err, value) => {
       if (err) {
         reject(err);
       } else {

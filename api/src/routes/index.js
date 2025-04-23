@@ -28,7 +28,7 @@ routes.put("/activities/:id", admin, activityController.update);
 routes.delete("/activities/:id", admin, activityController.destroy);
 
 // user activity routes
-routes.post("/user-activities/:id", auth, userActivityController.create);
+routes.get("/user-activities/:id", auth, userActivityController.create);
 routes.get("/my-activities", auth, userActivityController.myActivities);
 routes.delete("/user-activities/:id", auth, userActivityController.cancel);
 

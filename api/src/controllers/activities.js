@@ -6,6 +6,7 @@ const {
   createActivity,
 } = require("../services/activities");
 const { getAllMembersByActivityId } = require("../services/user_activities");
+const userActivities = require("../services/user_activities");
 
 // Criação de atividade
 const create = async (req, res) => {
@@ -28,7 +29,6 @@ const create = async (req, res) => {
 
     res.json(activity);
   } catch (err) {
-    console.log(err);
     res.status(400).json({ error: "erro ao criar atividade" });
   }
 };
@@ -55,7 +55,6 @@ const update = async (req, res) => {
     });
     res.json(activity);
   } catch (err) {
-    console.log(err);
     res.status(400).json({ error: "erro ao atualizar atividade" });
   }
 };
@@ -67,9 +66,23 @@ const list = async (req, res) => {
 
   if (user.isAdmin) {
     const activities = await listAllActivities(true);
+    for await (const activity of activities) {
+      const userActivitiesByActivity =
+        await userActivities.getUserActivityByActivity(activity.id);
+      const userCount = userActivitiesByActivity.length || 0;
+      activity.userCount = userCount;
+    }
     res.json(activities);
   } else {
     const activities = await listAllActivities(false);
+
+    for await (const activity of activities) {
+      const userActivitiesByActivity =
+        await userActivities.getUserActivityByActivity(activity.id);
+      const userCount = userActivitiesByActivity.length || 0;
+      activity.userCount = userCount;
+    }
+
     const filteredActivities = activities.filter(
       (activity) => new Date(activity.date) > today
     );
@@ -85,6 +98,7 @@ const destroy = async (req, res) => {
     await deleteActivity(id);
     res.status(204).send();
   } catch (err) {
+    console.log(err);
     res.status(400).json({ error: "Erro ao excluir atividade" });
   }
 };

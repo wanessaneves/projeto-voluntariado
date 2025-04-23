@@ -75,7 +75,7 @@ const updateUser = async (id, data) => {
     name: data.name || user.name,
     email: data.email || user.email,
     password: hashedPassword,
-    isAdmin: false,
+    isAdmin: true,
   };
 
   userDB.put(`user_${id}`, JSON.stringify(updatedUser), (err) => {
